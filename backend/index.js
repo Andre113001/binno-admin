@@ -37,6 +37,22 @@ app.get('/api/get', (req, res) => {
     })
 });
 
+app.get('/api/elements', async (req, res) => {
+    try {
+        db.query('SELECT * FROM test', async (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ error: 'Internal server error' });
+            } else {
+                // console.log(result)
+                res.send(result)
+            }
+        });
+    } catch (error) {
+        console.error(error);
+    }
+});
+
 // LOGIN
 app.post('/api/login', async (req, res) => {
     const { accessKey, password } = req.body;
@@ -124,7 +140,6 @@ app.post('/api/logout', (req, res) => {
 
     return res.json({ message: 'Logged out successfully' });
 });
-
 
 
 // Server Listener

@@ -1,34 +1,58 @@
-//https://react-tailwindcss-datepicker.vercel.app/demo
+import React, { useState, useEffect } from 'react';
+import parse from 'html-react-parser'
+import {DndContext} from '@dnd-kit/core';
+import Draggable from '../components/DND/Draggable';
+import Droppable from '../components/DND/Droppable';
+import { Link } from 'react-router-dom';
 
-import React, { useState } from 'react';
-import Datepicker from 'react-tailwindcss-datepicker';
-import { DragDropContext } from 'react-beautiful-dnd';
-
-import CustomModal from '../components/CustomModal/CustomModal';
-import { Button } from '@mui/material';
 
 function TestComponents() {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/elements')
+      .then(res => res.json())
+      .then(data => setData(data))
+      .catch(err => console.log(err));
+  }, []);
+
   return (
-  <>
     <div className="container">
-      <h1 className='heading-1 mt-20'>Testing</h1>
-      <CustomModal 
-          open={open}
-          handleClose={handleClose}
-          modalHeading={"From Test"}
-          modalDescription={"Description from Test"}
-          additions={
-            <button className='btn-blue w-full mt-5'>Button from test</button>
-          }
-      />
-      <button className='btn-blue' onClick={handleOpen}>Click Me</button>
+      {data.map((item) => (
+        <div className="mt-10" key={item.test_id}>
+          {parse(item.test_txt, {
+            replace: (domNode) => {
+              console.dir(domNode, {depth: null});
+              // switch (domNode.name) {
+              //   case 'h1':
+              //     return (<h1 className='heading-1'>{domNode.childNodes[0].data}</h1>);
+              //   case 'p':
+              //     return (<p>{domNode.childNodes[0].data}</p>)
+              //   case 'img':
+              //     console.log('img');
+              //     break;
+              //   case 'br':
+              //     return (<br/>)
+              //   default:
+              //     console.error("Element not found")
+              //     break;
+              // }
+              // if (domNode.attribs && domNode.attribs.class === 'heading-1') {
+              //   return <h1 className='heading-1'>{domNode.childNodes}</h1>
+              // }
+            }
+          })}
+          {/* {console.log(item.test_txt)} */}
+        </div>
+      ))}
     </div>
-  </>
   );
 }
 
-export default TestComponents
+export default TestComponents;
+
+
+
+
+
+

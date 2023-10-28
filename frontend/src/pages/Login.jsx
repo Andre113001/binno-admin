@@ -1,21 +1,20 @@
-import * as React from 'react';
+import React from 'react';
 import {useState} from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
+import ErrorIcon from '@mui/icons-material/Error'
+
 import '../App.css'
 import {useNavigate} from 'react-router-dom'
+import CustomModal from '../components/CustomModal/CustomModal';
+import { Fragment } from 'react';
 
 
 
@@ -35,8 +34,13 @@ function Copyright(props) {
 
 export default function Login() {
     const navigate = useNavigate()
-  
-    const handleSubmit = (event) => {
+    
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const accessKey = data.get('access-key');
@@ -45,6 +49,7 @@ export default function Login() {
             accessKey: accessKey,
             password: password
         }
+
 
         const fetchData = async() => {
             try {
@@ -56,11 +61,12 @@ export default function Login() {
                     }
                 })
                 const data = await res.json()
-                
+                console.log(data.token);
                 if (data.token) {
                     navigate('/dashboard')
                 } else {
-                    alert('Unauthorized')
+                    console.log('asfaf');
+                    handleOpen()
                 }
 
                 // console.log(data)
@@ -80,6 +86,20 @@ export default function Login() {
     return (
         <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {open && (<CustomModal 
+            open={open}
+            handleClose={handleClose}
+            content = {
+                <Fragment> 
+                    <ErrorIcon/>
+                    <h1 className='heading-1'>I'm from Login</h1>
+                    <p>This is a paragraph from Login</p>
+                </Fragment>
+            }
+            additions={
+            <button className='btn-blue'>Button from test</button>
+            }
+        />)}
         <Box
             sx={{
             marginTop: 8,

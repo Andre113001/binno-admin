@@ -46,7 +46,7 @@ function Requests() {
                 content={
                     <div className='overflow-auto'>
                         {/* Request ID */}
-                        <span className='sm font-bold'>111-222-333</span>
+                        <span className='sm'>111-222-333</span>
                         {/* Full Name */}
                         <h1 className='text-3xl font-bold'>Marcus Andre Genorga</h1>
                         {/* Address */}
