@@ -44,7 +44,7 @@ app.get('/api/elements', async (req, res) => {
                 console.log(err);
                 return res.status(500).json({ error: 'Internal server error' });
             } else {
-                // console.log(result)
+                console.log(result)
                 res.send(result)
             }
         });
@@ -78,7 +78,7 @@ app.post('/api/login', async (req, res) => {
 
                 if (passwordMatch) {
                     // User authenticated successfully
-                    const user = result[0];
+                    const user = result[0];            
 
                     // Create a JSON Web Token (JWT) to represent the authenticated user
                     const token = jwt.sign(
@@ -89,7 +89,8 @@ app.post('/api/login', async (req, res) => {
 
                     console.log(result);
 
-                    // // Set the token in a cookie
+
+                    // Set the token in a cookie
                     // res.setHeader(
                     //     'Set-Cookie',
                     //     cookie.serialize('jwt_token', token, {

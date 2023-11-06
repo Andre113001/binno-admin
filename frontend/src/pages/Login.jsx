@@ -63,9 +63,9 @@ export default function Login() {
                 const data = await res.json()
                 console.log(data.token);
                 if (data.token) {
-                    navigate('/dashboard')
+                    localStorage.setItem('access', data.token)
+                    navigate('/dashboard/')
                 } else {
-                    console.log('asfaf');
                     handleOpen()
                 }
 

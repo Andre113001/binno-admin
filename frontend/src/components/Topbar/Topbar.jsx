@@ -1,5 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 
 // ICONS
 import {
@@ -9,6 +10,13 @@ import {
 } from '@mui/icons-material';
 
 function Topbar() {
+  const navigate = useNavigate()
+  function handleDestroyToken() {
+    localStorage.removeItem('access');
+    console.log('Token Destroyed');
+    navigate('/')
+  }
+
   return (
     <div>
       <nav className='flex mt-5 bg-white border-gray-200 justify-center items-center md:gap-x-[35%] sm:gap-x-4' >
@@ -28,12 +36,10 @@ function Topbar() {
               Calendar
           </span>
         </Link>
-          <Link to={'/'}>
-            <span className='m-3 rounded-[10px] p-4 hover:bg-gray-300 hover:cursor-pointer duration-300 flex items-center gap-x-2'>
-              <LogoutIcon className='nav-icon' />
-              Logout
-            </span>
-          </Link>
+          <span onClick={handleDestroyToken} className='m-3 rounded-[10px] p-4 hover:bg-gray-300 hover:cursor-pointer duration-300 flex items-center gap-x-2'>
+            <LogoutIcon className='nav-icon' />
+            Logout
+          </span>
         </div>
       </nav>
     </div>
