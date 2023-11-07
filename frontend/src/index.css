@@ -25,7 +25,7 @@
 
 /* BUTTONS */
 .btn-orange {
-    @apply bg-orange-400 duration-300 hover:bg-orange-600 text-white font-bold m-2 py-2 px-4 border rounded-[10px] focus:ring-4 focus:ring-orange-200;
+    @apply bg-orange-300 duration-300 hover:bg-orange-600 text-white font-bold m-2 py-2 px-4 border rounded-[10px] focus:ring-4 focus:ring-orange-200;
 }
 
 .btn-blue {
@@ -81,6 +81,31 @@
 
 .option-icon {
     font-size: 100px !important;
+}
+
+/* Elements */
+.element_h1 {
+    @apply text-3xl font-bold;
+}
+
+.element_h2 {
+    @apply text-2xl font-bold;
+}
+
+.element_h3 {
+    @apply text-xl font-bold;
+}
+
+.element_p {
+    @apply text-sm;
+}
+
+.element_a {
+    @apply cursor-pointer text-blue-500 underline;
+}
+
+.draggable_style {
+    @apply p-6 bg-white border border-gray-200 rounded-lg m-2 flex space-x-3 hover:cursor-grab active:cursor-grabbing;
 }
 
 /* Membership Navigation Bar */
