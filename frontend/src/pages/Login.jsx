@@ -13,8 +13,9 @@ import ErrorIcon from '@mui/icons-material/Error'
 
 import '../App.css'
 import {useNavigate} from 'react-router-dom'
-import CustomModal from '../components/CustomModal/CustomModal';
 import { Fragment } from 'react';
+import { useAuth } from '../hooks/AuthContext';
+import useCustomModal from '../hooks/useCustomModal';
 
 
 
@@ -33,11 +34,9 @@ function Copyright(props) {
 }
 
 export default function Login() {
+    const { handleOpen, handleClose, CustomModal } = useCustomModal(); 
     const navigate = useNavigate()
-    
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const { login } = useAuth()
 
 
     const handleSubmit = async (event) => {
@@ -62,20 +61,14 @@ export default function Login() {
                 })
                 const data = await res.json()
                 console.log(data.token);
+                
                 if (data.token) {
-                    localStorage.setItem('access', data.token)
-                    navigate('/dashboard/')
-                } else {
-                    handleOpen()
+                    localStorage.setItem('access', data.token);
+                    login(); // Set authenticated to true
+                    navigate('/dashboard');
+                  } else {
+                    handleOpen();
                 }
-
-                // console.log(data)
-
-                
-
-                // store the shhit to a cookie
-                // console.log("navigating");
-                
             } catch(err) {
                 console.err
             }

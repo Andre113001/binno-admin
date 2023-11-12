@@ -1,10 +1,13 @@
 import { Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthContext';
 
-function PrivateRoute({ element, authenticated, ...rest }) {
+function PrivateRoute({ path, element }) {
+  const { authenticated } = useAuth();
+
   return authenticated ? (
-    <Route {...rest} element={element} />
+    <Route path={path} element={element} />
   ) : (
-    <Navigate to="/" state={{ from: rest.location }} />
+    <Navigate to="/missing" replace />
   );
 }
 

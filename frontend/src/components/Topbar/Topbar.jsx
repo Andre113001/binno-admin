@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {useNavigate} from 'react-router-dom'
 
 // ICONS
@@ -11,6 +11,7 @@ import {
 
 function Topbar() {
   const navigate = useNavigate()
+
   function handleDestroyToken() {
     localStorage.removeItem('access');
     console.log('Token Destroyed');
@@ -33,7 +34,6 @@ function Topbar() {
         <Link to={'/calendar'}>
           <span className='nav-item'>
               <CalendarIcon className='nav-icon' />
-              Calendar
           </span>
         </Link>
           <span onClick={handleDestroyToken} className='m-3 rounded-[10px] p-4 hover:bg-gray-300 hover:cursor-pointer duration-300 flex items-center gap-x-2'>

@@ -15,8 +15,9 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 10,
-    borderRadius: 10,
+    borderRadius: 5,
   };
+
 
 function CustomModal({open, handleClose, content, additions}) {
     return (

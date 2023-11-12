@@ -5,14 +5,14 @@ import {ArrowBack as ArrowBackIcon} from '@mui/icons-material'
 function Back(props) {
     return (
         <div>
-            <Link to={props.link}>
-                <div className="flex space-x-3 mb-5 mt-10 w-full cursor-pointer">
-                    <div className="icon" >
-                        <ArrowBackIcon />
-                        <span>Back</span>
-                    </div>
+                <div className="flex space-x-4 mb-5 mt-10">
+                    <Link to={props.link}>
+                        <div className="icon cursor-pointer flex row-auto justify-center items-center" >
+                            <ArrowBackIcon />
+                            <span>Back</span>
+                        </div>
+                    </Link>
                 </div>
-            </Link>
         </div>
   )
 }

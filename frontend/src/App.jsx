@@ -3,6 +3,9 @@ import './App.css'
 
 import { Routes, Route, Outlet } from "react-router-dom";
 
+// Hooks
+import { AuthProvider } from './hooks/AuthContext';
+
 // Pages
 import Login from './pages/Login';
 import Members from './pages/Members';
@@ -22,30 +25,34 @@ function App() {
 
   return (
     <>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Login />} />
-        <Route path='/test' element={< TestComponents/>}/>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Login />} />
+          <Route path='/test' element={< TestComponents/>}/>
+          <Route path='/dashboard' element={< Dashboard/>}/>
+          <Route path='/calendar' element={< Calendar/>}/>
 
-        <Route
-          path="/private" // Define a common parent route for private routes
-          element={
-            <Outlet>
-              {/* Private Routes */}
-              <PrivateRoute path="members" element={<Members />} authenticated={authenticated} />
-              <PrivateRoute path="dashboard" element={<Dashboard />} authenticated={authenticated} />
-              <PrivateRoute path="contents" element={<Contents />} authenticated={authenticated} />
-              <PrivateRoute path="settings" element={<SystemSettings />} authenticated={authenticated} />
-              <PrivateRoute path="announce" element={<Announce />} authenticated={authenticated} />
-              <PrivateRoute path="members/requests" element={<Requests />} authenticated={authenticated} />
-              <PrivateRoute path="calendar" element={<Calendar />} authenticated={authenticated} />
-            </Outlet>
-          }
-        />
+          <Route
+            path="/private" // Define a common parent route for private routes
+            element={
+              <Outlet>
+                {/* Private Routes */}
+                <PrivateRoute path="members" element={<Members />} authenticated={authenticated} />
+                <PrivateRoute path="dashboard" element={<Dashboard />} authenticated={true} />
+                <PrivateRoute path="contents" element={<Contents />} authenticated={authenticated} />
+                <PrivateRoute path="settings" element={<SystemSettings />} authenticated={authenticated} />
+                <PrivateRoute path="announce" element={<Announce />} authenticated={authenticated} />
+                <PrivateRoute path="members/requests" element={<Requests />} authenticated={authenticated} />
+                <PrivateRoute path="calendar" element={<Calendar />} authenticated={authenticated} />
+              </Outlet>
+            }
+          />
 
-        {/* Catch */}
-        <Route path="/missing" element={<Missing />} />
-      </Routes>
+          {/* Catch */}
+          <Route path="/missing" element={<Missing />} />
+        </Routes>
+      </AuthProvider>
     </>
   );
 }

@@ -29,14 +29,14 @@ function Dashboard() {
             </Link>
 
             <Link to={'/announce'} className='col-span-2'>
-              <div className="option bg-[#ffa552]">
+              <div className="option bg-[#78c1f1]">
                 <SendIcon className='option-icon'/><br />
                 <span>Announce</span>
               </div>
             </Link>
 
             <Link to={'/settings'} className='col-span-2'>
-              <div className="option bg-[#ffa552]">
+              <div className="option bg-[#78c1f1]">
                 <SettingIcon className='option-icon'/> <br />
                 <span>Settings</span>
               </div>
