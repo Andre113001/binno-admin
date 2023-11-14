@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { Link } from 'react-router-dom';
 import data from '../../../backend/public/collection/1.json'
 
@@ -23,6 +23,7 @@ function TestComponents() {
   const [ele, setEle] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [elementType, setElementType] = useState('')
 
   const elementId = 1;
 
@@ -48,11 +49,39 @@ function TestComponents() {
     loadData();
   }, [elementId]);
 
-  const [names, setNames] = useState(["Marcus", "Teddy", "Tuts", "Sean"]);
-
   const parsedData = JSON.stringify(ele);
-
   const [elementsData, setElementsData] = useState(parsedData)
+  const [isEditing, setEditing] = useState(false)
+
+  const toggleEditing = () => {
+    setEditing(!isEditing);
+  };
+
+  const handleElementTypeChange = (event) => {
+    setElementType(event.target.value);
+  };
+
+  const addNewElement = () => {
+    const newElement = {
+      id: elementsData.length + 1,
+      type: elementType,
+    }
+    setElementType((prevData) => [...prevData, newElement])
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === '/' && !isEditing) {
+      console.log(addNewElement());
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [addNewElement, isEditing]);
  
   const saveFn = async () => {
     try {
@@ -60,7 +89,7 @@ function TestComponents() {
         alert('No elements data to save');
         return;
       }
-  
+
       const response = await fetch(`/api/elements/save-elements/${elementId}`, {
         method: 'POST',
         headers: {
@@ -79,9 +108,37 @@ function TestComponents() {
     }
   };
 
-  // useEffect(()=> {
-  //   console.log(JSON.stringify(elementsData))
-  // }, [elementsData])
+  // const AddElementComp = () => {
+  //   return (
+  //     <>
+  //       <select value={elementType} onChange={handleElementTypeChange}>
+  //         <option value="">Select Element Type</option>
+  //         <option value="heading1">Heading 1</option>
+  //         <option value="heading2">Heading 2</option>
+  //         <option value="heading3">Heading 3</option>
+  //         <option value="paragraph">Paragraph</option>
+  //         <option value="image">Image</option>
+  //         <option value="ytEmbed">Youtube Embed</option>
+  //       </select>
+  //       <button onClick={addNewElement}>Add Element</button>
+  //     </>
+  //   );
+  // }
+
+  
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === '/') {
+        console.log(addNewElement());
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [addNewElement]);
 
   return (
     <>
@@ -90,21 +147,41 @@ function TestComponents() {
         {loading ? (
           <p>Loading...</p>
         ) : (
+          <Fragment>
+            <header>
+              <button className='btn-orange' onClick={saveFn}>
+                Save Elements
+              </button>
+              {/* {AddElementComp()} */}
+            </header>
             <main>
-              <DndContext 
-                onDragStart={handleDragStart}
-                collisionDetection={closestCenter} 
-                onDragEnd={handleDragEnd} 
-              >
-              <SortableContext
-                  items={elementsData.map((element) => element.id)}
-                  strategy={verticalListSortingStrategy}
+              {isEditing ? (
+                <div>
+                  {/* Your editing-related components */}
+                  {AddElementComp()}
+                </div>
+              ) : (
+                <DndContext
+                  onDragStart={handleDragStart}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  {elementsData.map(element => <SortableObject key={element.id} id={element.id} elements={element}/>)}
-              </SortableContext>
-              </DndContext>
-              <button className='btn-orange' onClick={saveFn}>Save Elements</button>
+                  <SortableContext
+                    items={elementsData.map((element) => element.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {elementsData.map((element) => (
+                      <SortableObject
+                        key={element.id}
+                        id={element.id}
+                        elements={element}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              )}
             </main>
+          </Fragment>
         )}
       </div>
     </>

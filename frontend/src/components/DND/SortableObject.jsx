@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Css } from '@mui/icons-material'
 import YoutubeEmbed from '../YoutubeEmbed/YoutubeEmbed'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-
 const SortableObject = (props) => {
-    const {elements} = props;
+    const { elements } = props;
 
     const {
         attributes,
@@ -15,7 +13,22 @@ const SortableObject = (props) => {
         setNodeRef,
         transform,
         transition
-    } = useSortable({id: props.id})
+    } = useSortable({ id: props.id })
+
+    const [isEditing, setEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(elements.content);
+
+    const toggleEditing = () => {
+        setEditing(!isEditing);
+    };
+
+    const handleDoubleClick = () => {
+        toggleEditing();
+    };
+
+    const handleContentChange = (event) => {
+        setEditedContent(event.target.value);
+    };
 
     // Define a fixed size for the element while dragging
     const fixedSizeStyle = {
@@ -30,18 +43,35 @@ const SortableObject = (props) => {
     };
 
     return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className='draggable_style'>
-        <div className='drag-handle'>
-            <DragIndicatorIcon className='hover:bg-[#cccccc] rounded-md hover:cursor-grab active:cursor-grabbing'/>
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className={`draggable_style ${isEditing ? 'editable' : ''}`}
+            onDoubleClick={handleDoubleClick}
+        >
+            <div className='drag-handle'>
+                <DragIndicatorIcon className='hover:bg-[#cccccc] rounded-md hover:cursor-grab active:cursor-grabbing' />
+            </div>
+            {isEditing ? (
+                <textarea
+                    value={editedContent}
+                    onChange={handleContentChange}
+                    onBlur={toggleEditing}
+                    autoFocus
+                />
+            ) : (
+                <>
+                    {elements.type === 'YoutubeEmbed' ? (
+                        <YoutubeEmbed videoLink={elements.attributes} />
+                    ) : (
+                        <div dangerouslySetInnerHTML={{ __html: `<${elements.type} ${elements.attributes}>${editedContent}</${elements.type}>` }} />
+                    )}
+                </>
+            )}
         </div>
-        {elements.type == 'YoutubeEmbed' ? 
-            <YoutubeEmbed videoLink={elements.attributes}/> 
-            :
-            <div dangerouslySetInnerHTML={{ __html: `<${elements.type} ${elements.attributes}>${elements.content}</${elements.type}>` }}
-        />
-        }
-    </div>
-  )
+    );
 }
 
-export default SortableObject
+export default SortableObject;

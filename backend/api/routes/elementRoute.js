@@ -1,7 +1,7 @@
 // elementRoute.js
 const express = require('express');
 const router = express.Router();
-const db = require('../database/db');
+const db = require('../../database/db');
 
 // UTILS
 const {readElements, saveElements} = require('../utils/elementsUtility');

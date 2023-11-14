@@ -32,19 +32,20 @@ function App() {
           <Route path='/test' element={< TestComponents/>}/>
           <Route path='/dashboard' element={< Dashboard/>}/>
           <Route path='/calendar' element={< Calendar/>}/>
+          <Route path='/announce' element={<Announce/>}/>
 
           <Route
             path="/private" // Define a common parent route for private routes
             element={
               <Outlet>
                 {/* Private Routes */}
-                <PrivateRoute path="members" element={<Members />} authenticated={authenticated} />
+                {/* <PrivateRoute path="members" element={<Members />} authenticated={authenticated} />
                 <PrivateRoute path="dashboard" element={<Dashboard />} authenticated={true} />
                 <PrivateRoute path="contents" element={<Contents />} authenticated={authenticated} />
                 <PrivateRoute path="settings" element={<SystemSettings />} authenticated={authenticated} />
                 <PrivateRoute path="announce" element={<Announce />} authenticated={authenticated} />
                 <PrivateRoute path="members/requests" element={<Requests />} authenticated={authenticated} />
-                <PrivateRoute path="calendar" element={<Calendar />} authenticated={authenticated} />
+                <PrivateRoute path="calendar" element={<Calendar />} authenticated={authenticated} /> */}
               </Outlet>
             }
           />
