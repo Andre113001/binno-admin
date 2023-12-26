@@ -161,10 +161,11 @@ function TestComponents() {
                   {AddElementComp()}
                 </div>
               ) : (
+                <div className="dnd-container">
                 <DndContext
                   onDragStart={handleDragStart}
                   collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
+                  onDragOver={handleDragOver}
                 >
                   <SortableContext
                     items={elementsData.map((element) => element.id)}
@@ -175,10 +176,12 @@ function TestComponents() {
                         key={element.id}
                         id={element.id}
                         elements={element}
+                        handle
                       />
                     ))}
                   </SortableContext>
                 </DndContext>
+                </div>
               )}
             </main>
           </Fragment>
@@ -192,7 +195,7 @@ function TestComponents() {
     console.log(isDragging);
   }
 
-  function handleDragEnd(event) {
+  function handleDragOver(event) {
     console.log("Drag end called");
     const {active, over} = event;
     console.log("ACTIVE: " + active.id);
@@ -211,12 +214,4 @@ function TestComponents() {
   }
 }
 
-
-
 export default TestComponents;
-
-
-
-
-
-

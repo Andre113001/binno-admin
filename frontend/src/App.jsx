@@ -29,7 +29,7 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
-          <Route path='/test' element={< TestComponents/>}/>
+          <Route path='/test' element={<TestComponents />}/>
           <Route path='/dashboard' element={< Dashboard/>}/>
           <Route path='/calendar' element={< Calendar/>}/>
           <Route path='/announce' element={<Announce/>}/>

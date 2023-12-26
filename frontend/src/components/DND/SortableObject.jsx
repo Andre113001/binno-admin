@@ -12,7 +12,9 @@ const SortableObject = (props) => {
         listeners,
         setNodeRef,
         transform,
-        transition
+        transition,
+        isDragging,
+        handle
     } = useSortable({ id: props.id })
 
     const [isEditing, setEditing] = useState(false);
@@ -38,8 +40,8 @@ const SortableObject = (props) => {
 
     const style = {
         ...fixedSizeStyle,
-        transform: CSS.Transform.toString(transform),
-        transition,
+        transform: CSS.Translate.toString(transform),
+        transition
     };
 
     return (
@@ -51,26 +53,23 @@ const SortableObject = (props) => {
             className={`draggable_style ${isEditing ? 'editable' : ''}`}
             onDoubleClick={handleDoubleClick}
         >
-            <div className='drag-handle'>
-                <DragIndicatorIcon className='hover:bg-[#cccccc] rounded-md hover:cursor-grab active:cursor-grabbing' />
-            </div>
-            {isEditing ? (
-                <textarea
-                    value={editedContent}
-                    onChange={handleContentChange}
-                    onBlur={toggleEditing}
-                    autoFocus
-                />
-            ) : (
-                <>
-                    {elements.type === 'YoutubeEmbed' ? (
-                        <YoutubeEmbed videoLink={elements.attributes} />
-                    ) : (
-                        <div dangerouslySetInnerHTML={{ __html: `<${elements.type} ${elements.attributes}>${editedContent}</${elements.type}>` }} />
-                    )}
-                </>
-            )}
-        </div>
+        {isEditing ? (
+            <textarea
+                value={editedContent}
+                onChange={handleContentChange}
+                onBlur={toggleEditing}
+                autoFocus
+            />
+        ) : (
+            <>
+                {elements.type === 'YoutubeEmbed' ? (
+                    <YoutubeEmbed videoLink={elements.attributes} />
+                ) : (
+                    <div dangerouslySetInnerHTML={{ __html: `<${elements.type} ${elements.attributes}>${editedContent}</${elements.type}>` }} />
+                )}
+            </>
+        )}
+    </div>
     );
 }
 
