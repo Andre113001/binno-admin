@@ -21,11 +21,13 @@ app.use(urlencodedMiddleware);
 const getRoute = require('./routes/getRoute');
 const loginRoute = require('./routes/loginRoute');
 const elementRoute = require('./routes/elementRoute');
+const scheduleRoute = require('./routes/scheduleRoute');
 
 // Use Routes
 app.use('/api/login', loginRoute);
 app.use('/api/elements', elementRoute);
 app.use('/api/get', getRoute);
+app.use('/api/schedule', scheduleRoute);
 
 // Server Listener
 app.listen(port, () => {

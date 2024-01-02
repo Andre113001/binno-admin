@@ -1,4 +1,10 @@
-import React, {useState, Fragment} from 'react'
+import React, {useState, Fragment, useEffect} from 'react';
+import Moment from 'react-moment';
+import 'moment-timezone';
+import moment from 'moment';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
 // Components
 import Topbar from '../components/Topbar/Topbar'
 import Back from '../components/Back/Back'
@@ -7,7 +13,7 @@ import Back from '../components/Back/Back'
 // Other Components
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { DateCalendar, Timepicker } from '@mui/x-date-pickers';
 import { Divider } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
@@ -15,10 +21,63 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import useCustomModal from '../hooks/useCustomModal';
 
 // Icon
-import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
+import {
+    ScheduleSend,
+    Visibility
+} from '@mui/icons-material';
 
 const Calendar = () => {
-    const { handleOpen, handleClose, CustomModal } = useCustomModal(); 
+    const { handleOpen, handleClose, CustomModal } = useCustomModal();
+    const [selectedDate, setSelectedDate] = useState('');
+    const [appointments, setAppointments] = useState(null);
+
+    const fetchDate = async (date) => {
+        try {
+            const response = await axios.get(`http://localhost:3100/api/schedule/${date}`);
+            // Handle the data from the response
+            return response.data;
+            // You can update your state or perform other actions with the data
+        } catch (error) {
+            // Handle errors
+            console.error('Error fetching data:', error.message);
+        }
+    };
+
+    useEffect(() => {
+        const fetchInitialDate = async () => {
+            const date = await moment().format("YYYY-MM-DD");
+            setSelectedDate(date);
+        };
+
+        fetchInitialDate();
+    }, []);
+  
+    // Function to handle date selection
+    const handleDateChange = async (newDate) => {
+        const formattedDate = await newDate.format('YYYY-MM-DD');
+        setSelectedDate(formattedDate);
+    };
+
+    const handleSubmitReschedule = async () => {
+        console.log("pressed");
+    }
+    
+    useEffect(() => {
+        const loadNewDate = () => {
+            setSelectedDate(selectedDate);
+            fetchDate(selectedDate)
+                .then(results => {
+                    setAppointments(results);
+                    console.log(selectedDate, results);
+                    // Update state or perform other actions with the result
+                })
+                .catch(error => {
+                    console.error('Error: ', error.message);
+                });
+        };
+    
+        loadNewDate();
+    }, [selectedDate]);
 
     const f2fMeeting = () => {
         return (
@@ -29,11 +88,11 @@ const Calendar = () => {
         );
     };
 
-    const zoomMeeting = () => {
+    const zoomMeeting = (link) => {
         return (
             <div className='border text-center rounded-md mt-2 bg-blue-200 p-3 text-gray-600 cursor-pointer'>
                 <span className='font-bold '>Zoom Meeting</span><br/>
-                <a className='element_a' href="#">https://us04web.zoom.us/j/2214143?pwd=password</a>
+                <a className='element_a' href={link}>{link}</a>
             </div>
         );
     }
@@ -42,85 +101,92 @@ const Calendar = () => {
     <div>
         <Topbar />
         <div className="container">
-        {open && (<CustomModal 
-            open={open}
-            handleClose={handleClose}
-            content = {
-                <Fragment>
-                    <h1 className='mb-2 element_h1'>Select a different date</h1>
-                    <div className="w-full"> {/* Use w-full to make the container full width */}
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker orientation='landscape' />
-                        </LocalizationProvider>
-                    </div>
-                </Fragment>
-            }
-            additions={
-            <button className='btn-blue mt-2'>Submit</button>
-            }
-        />)}
+            {open && (<CustomModal 
+                open={open}
+                handleClose={handleClose}
+                content = {
+                    <Fragment>
+                        <h1 className='mb-2 element_h1'>Select a different date</h1>
+                        <div className="w-full"> {/* Use w-full to make the container full width */}
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker orientation='landscape' />
+                            </LocalizationProvider>
+                        </div>
+                    </Fragment>
+                }
+                    additions={
+                    <button onClick={handleSubmitReschedule} className='btn-blue mt-2'>Submit</button>
+                }
+            />)}
             <Back link='/dashboard'/>
             <div className='flex row-auto '>
-                <div className="p-4">
+                <div className="p-4" style={{ flex: 1 }}>
                     <h1 className='element_h1 mb-4'>Calendar</h1>
                     <Divider/>
                     <div className='mt-4'>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar />
+                            <DateCalendar
+                                style={{ width: '100%' }}
+                                date={selectedDate} 
+                                onChange={handleDateChange}
+                            />
                         </LocalizationProvider>
                     </div>
                 </div>
-                <div>
+                <div style={{ flex: 2 }}>
                     <div className='p-4'>
-                        <h3 className='element_h3'>Scheduled Meetings</h3>                
-                        <span>November 11, 2023</span>
+                        <h3 className='element_h3'>Scheduled Interviews</h3>                
+                        <span><Moment format='MMMM DD, YYYY'>{selectedDate}</Moment></span> {/*It doesn;t load here*/}
                     </div>
-                    <div className="w-[100%] p-4 space-y-8 overflow-y-auto max-h-screen">
-                        <div className='space-y-3'>
-                            <div className='flex row-auto justify-between items-center'>
-                                <h1 className='heading-1'>Jake Zyrus</h1>
-                                <div className='child2 ml-auto'>
-                                <button onClick={handleOpen} className='btn-orange flex items-center justify-center space-x-2'>
-                                        <ScheduleSendIcon/>
-                                        <span>Reschedule</span>
-                                    </button>
+                    <div className="p-4 space-y-10  overflow-y-auto">
+                    {
+                        appointments && appointments.length > 0 ? (
+                            appointments.map((appointment) => {
+                                return (
+                                    <div className='space-y-3' key={appointment.sched_id}>
+                                    {/* Header */}
+                                    <div className='flex row-auto justify-between items-center'>
+                                        <h1 className='heading-1'>{appointment.app_institution}</h1>
+                                        <div className='ml-auto'>
+                                        <Link to={'#'}><button  className='btn bg-blue-400 flex items-center justify-center space-x-2'>
+                                                <Visibility/>
+                                                <span>View Application</span>
+                                            </button></Link>
+                                        </div>
+                                        <div>
+                                        <button onClick={() => handleOpen(appointment)} className='btn-orange flex items-center justify-center space-x-2'>
+                                                <ScheduleSend/>
+                                                <span>Reschedule</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <h4>{appointment.app_email}</h4>
+                                    <span><Moment format="hh:mm A" parse="HH:mm:ss">{appointment.sched_timestart}</Moment> - <Moment format="hh:mm A" parse="HH:mm:ss">{appointment.sched_timedue}</Moment></span>
+                                    {appointment.sched_zoomlink && appointment.sched_zoomlink.length > 0 ? (
+                                        zoomMeeting(appointment.sched_zoomlink)
+                                        ) : (
+                                        f2fMeeting()
+                                    )}
                                 </div>
+                                );
+                            })
+                        ) : (
+                            <div>
+                                <h1 className='text-6xl font-bold mb-5'>
+                                    No Scheduled Interview on this Date
+                                </h1>
+                                <a href="#" className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
+                                    Check Applications...
+                                </a>
                             </div>
-                            <h4 className='mt-2'>1130marcusa@gmail.com</h4>
-                            <span>11:00 AM - 12:00 PM</span>
-                            {zoomMeeting()}
-                            <p className='mt-4'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce leo augue, accumsan sed risus non, scelerisque commodo tortor. In sed lacus egestas magna ullamcorper varius vitae eu elit. Proin enim est, viverra tincidunt ornare id, vestibulum nec neque. In urna sem, elementum at porta eget, tristique nec orci. Nulla semper odio non nunc vulputate, sit amet interdum lacus molestie. Phasellus a accumsan sapien, ut varius leo. Sed et elit vitae ipsum lobortis volutpat non ac ligula. Sed efficitur, mi vel eleifend eleifend, dui nisi dapibus est, et sollicitudin felis nibh non metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed mattis metus dapibus neque commodo, non scelerisque felis pretium. Morbi molestie egestas mauris, quis cursus dolor varius eu. Fusce id mi ligula. Nulla libero metus, dapibus nec mauris eu, cursus efficitur sem. Praesent dignissim sem at lorem fermentum maximus. In in tincidunt ex.
-                                Curabitur pellentesque consequat erat at tempor. Vivamus sollicitudin bibendum viverra. Proin ornare vel metus non ultricies. Aliquam eget dui libero. Mauris ac congue nunc, ac finibus ex. Suspendisse vestibulum tortor nec suscipit fringilla. Donec maximus, odio vitae convallis tempor, nunc nunc pellentesque enim, non sagittis odio mauris id turpis. Aenean maximus nisl nibh, non bibendum velit iaculis id. Nullam ornare faucibus dolor sed porta. Vivamus semper risus in iaculis ultrices. Quisque nec posuere nisi, sed euismod lacus. Suspendisse a nunc metus. Vestibulum auctor ultrices nisl sit amet rhoncus. Suspendisse diam tortor, feugiat a euismod fringilla, posuere eget est. Vestibulum convallis, tortor et lacinia ullamcorper, nibh elit malesuada nisl, ut hendrerit lectus nunc sit amet turpis.
-                                Nullam faucibus blandit sem, eu porttitor felis feugiat quis. Praesent mattis diam sed erat tristique, nec condimentum leo maximus. Cras ac elit iaculis, consectetur lorem ut, pretium elit. Cras non neque iaculis, porta nunc et, consectetur dui. Morbi in pretium est. Maecenas lacus enim, suscipit eu erat non, egestas dapibus lectus. In dignissim interdum dui, eget fermentum quam facilisis quis. 
-                            </p>
-                        </div>
-
-                        <div>
-                            <div className='flex row-auto justify-between items-center'>
-                                <h1 className='heading-1'>Charice</h1>
-                                <div className='child2 ml-auto'>
-                                <button onClick={handleOpen} className='btn-orange flex items-center justify-center space-x-2'>
-                                        <ScheduleSendIcon/>
-                                        <span>Reschedule</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <h4 className='mt-2'>1130marcusa@gmail.com</h4>
-                            <span>01:00 PM - 02:00 PM</span>
-                            {f2fMeeting()}
-                            <p className='mt-4'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce leo augue, accumsan sed risus non, scelerisque commodo tortor. In sed lacus egestas magna ullamcorper varius vitae eu elit. Proin enim est, viverra tincidunt ornare id, vestibulum nec neque. In urna sem, elementum at porta eget, tristique nec orci. Nulla semper odio non nunc vulputate, sit amet interdum lacus molestie. Phasellus a accumsan sapien, ut varius leo. Sed et elit vitae ipsum lobortis volutpat non ac ligula. Sed efficitur, mi vel eleifend eleifend, dui nisi dapibus est, et sollicitudin felis nibh non metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed mattis metus dapibus neque commodo, non scelerisque felis pretium. Morbi molestie egestas mauris, quis cursus dolor varius eu. Fusce id mi ligula. Nulla libero metus, dapibus nec mauris eu, cursus efficitur sem. Praesent dignissim sem at lorem fermentum maximus. In in tincidunt ex.
-                                Curabitur pellentesque consequat erat at tempor. Vivamus sollicitudin bibendum viverra. Proin ornare vel metus non ultricies. Aliquam eget dui libero. Mauris ac congue nunc, ac finibus ex. Suspendisse vestibulum tortor nec suscipit fringilla. Donec maximus, odio vitae convallis tempor, nunc nunc pellentesque enim, non sagittis odio mauris id turpis. Aenean maximus nisl nibh, non bibendum velit iaculis id. Nullam ornare faucibus dolor sed porta. Vivamus semper risus in iaculis ultrices. Quisque nec posuere nisi, sed euismod lacus. Suspendisse a nunc metus. Vestibulum auctor ultrices nisl sit amet rhoncus. Suspendisse diam tortor, feugiat a euismod fringilla, posuere eget est. Vestibulum convallis, tortor et lacinia ullamcorper, nibh elit malesuada nisl, ut hendrerit lectus nunc sit amet turpis.
-                                Nullam faucibus blandit sem, eu porttitor felis feugiat quis. Praesent mattis diam sed erat tristique, nec condimentum leo maximus. Cras ac elit iaculis, consectetur lorem ut, pretium elit. Cras non neque iaculis, porta nunc et, consectetur dui. Morbi in pretium est. Maecenas lacus enim, suscipit eu erat non, egestas dapibus lectus. In dignissim interdum dui, eget fermentum quam facilisis quis. 
-                            </p>
-                        </div>
+                        )
+                    }
                     </div>
                 </div>
             </div>
         </div>    
     </div>
     )
-    }
+}
 
 export default Calendar

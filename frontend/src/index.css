@@ -33,7 +33,7 @@
 }
 
 .btn {
-    @apply duration-300 cursor-pointer hover:opacity-75 focus:ring-4 focus:ring-gray-300 text-white font-bold py-1 h-[64px] px-6 border rounded-[10px];
+    @apply duration-300 text-white font-bold m-2 py-2 px-4 border rounded-[10px] focus:ring-4;
 }
 
 /* NAV BAR */

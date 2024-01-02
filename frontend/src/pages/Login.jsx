@@ -101,7 +101,7 @@ export default function Login() {
             alignItems: 'center',
             }}
         >
-            <img src="../../../public/img/binno-logo.png" alt="" />
+            <img src="../../public/img/binno-logo.png" alt="" />
             <Typography className='sm:text-sm' component="h1" variant="h5">
             System Administrator Login
             </Typography>
@@ -141,7 +141,7 @@ export default function Login() {
                     backgroundColor: "#ff7a00",
                 }}
             >
-                Sign In
+                Sign-Up
             </Button>
             </Box>
         </Box>

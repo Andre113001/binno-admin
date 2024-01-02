@@ -19,8 +19,10 @@ const style = {
 
 function useCustomModal() {
   const [open, setOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
-  const handleOpen = () => {
+  const handleOpen = (dataToPass) => {
+    setModalData(dataToPass);
     setOpen(true);
   };
 
