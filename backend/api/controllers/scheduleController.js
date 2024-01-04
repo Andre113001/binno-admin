@@ -19,7 +19,20 @@ const getScheduleById = async (scheduleId) => {
 
 const getScheduleByDate = async (date) => {
     return new Promise((resolve, reject) => {
-        db.query('SELECT * FROM schedule_i INNER JOIN application_i ON schedule_i.sched_appid  = application_i.app_id WHERE sched_date = ?', [date], (err, result) => {
+        db.query(`SELECT 
+                    schedule_i.sched_id, 
+                    schedule_i.sched_date,
+                    schedule_i.sched_zoomlink,
+                    schedule_i.sched_appid,
+                    schedule_i.sched_timestart,
+                    schedule_i.sched_timedue,
+                    application_i.app_institution,
+                    application_i.app_email,
+                    application_i.app_address,
+                    application_i.app_type
+                    FROM schedule_i 
+                    INNER JOIN application_i ON schedule_i.sched_appid  = application_i.app_id 
+                    WHERE sched_date = ?`, [date], (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -86,16 +99,16 @@ const postSchedule = async (req, res) => {
 
 // Update / Change Schedule
 const changeSchedule = async (req, res) => {
-    const { scheduleId, newDate } = req.body;
+    const { scheduleId, newDate, newStart, newEnd } = req.body;
 
     try {
         const result = await getScheduleById(scheduleId);
 
         if (result.length > 0 && result[0].hasOwnProperty('sched_id')) {
-            db.query("UPDATE schedule_i SET sched_date = ?, sched_datemodified = NOW() WHERE sched_id = ?", [newDate, sanitizeId(scheduleId)], (updateError, updateRes) => {
+            db.query("UPDATE schedule_i SET sched_date = ?, sched_timestart = ?, sched_timedue = ?, sched_datemodified = NOW() WHERE sched_id = ?", [newDate, newStart, newEnd, sanitizeId(scheduleId)], (updateError, updateRes) => {
                 if (updateError) {
                     console.log(updateError);
-                    return res.status(500).json({ error: 'Failed to delete schedule' });
+                    return res.status(500).json({ error: 'Failed to change schedule' });
                 }
 
                 if (updateRes.affectedRows > 0) {

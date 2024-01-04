@@ -15,7 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar, Timepicker } from '@mui/x-date-pickers';
 import { Divider } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 
 // Custom Hooks
 import useCustomModal from '../hooks/useCustomModal';
@@ -27,9 +27,13 @@ import {
 } from '@mui/icons-material';
 
 const Calendar = () => {
-    const { handleOpen, handleClose, CustomModal } = useCustomModal();
+    const {handleOpen, handleClose, CustomModal } = useCustomModal();
+    const [modalData, setModalData] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
     const [appointments, setAppointments] = useState(null);
+    const [timeStart, setTimeStart] = useState('');
+    const [timeEnd, setTimeEnd] = useState('');
+    const [newSchedDate, setNewSchedDate] = useState('');
 
     const fetchDate = async (date) => {
         try {
@@ -58,8 +62,31 @@ const Calendar = () => {
         setSelectedDate(formattedDate);
     };
 
-    const handleSubmitReschedule = async () => {
+    const handlePassdata = async (appointment) => {
+        handleOpen();
+        setModalData(appointment);
+    };
+
+
+    const handleSubmitReschedule = async (sched_id, res) => {
+        try {
+            const response = await axios.post(`/api/schedule/sched-resched`, {
+                scheduleId: sched_id,
+                newDate: newSchedDate.format("YYYY-MM-DD"),
+                newStart: timeStart.format("HH:mm"),
+                newEnd: timeEnd.format("HH:mm")
+            });
+    
+            console.log('Response from localhost:3100', response.data);
+            // Add any additional logic here based on the response if needed
+        } catch (error) {
+            console.error('Error making request', error.message);
+            // Handle error
+            // Return an appropriate status code, but not `res.status` here
+        }
         console.log("pressed");
+        console.log(sched_id, " || ", newSchedDate.format("MM-DD-YYYY"), " || ", timeStart.format("HH:mm"), "||", timeEnd.format("HH:mm"));
+        location.reload();
     }
     
     useEffect(() => {
@@ -105,17 +132,44 @@ const Calendar = () => {
                 open={open}
                 handleClose={handleClose}
                 content = {
-                    <Fragment>
-                        <h1 className='mb-2 element_h1'>Select a different date</h1>
-                        <div className="w-full"> {/* Use w-full to make the container full width */}
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker orientation='landscape' />
-                            </LocalizationProvider>
+                <div className="flex">
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <div className="w-full flex flex-col">
+                            <div className='flex-1 mb-4'>
+                                <span className='mb-10 text-lg'>{modalData.sched_appid}</span>
+                                <h1 className='text-5xl font-bold'>Reschedule</h1>
+                                <p className='mb-5 font-bold'><Moment format='MMMM DD, YYYY'>{modalData.sched_date}</Moment></p>
+                                <p className='mb-2 text-2xl'>Pick a date</p>
+                                <DatePicker 
+                                    value={newSchedDate}
+                                    orientation='landscape'
+                                    onChange={(newDate) => setNewSchedDate(newDate)}
+                                />
+                            </div>
+                            <div className='flex-1 flex items-center mt-4 gap-8'>
+                                <div className='flex flex-col'>
+                                <p className='mb-1 text-2xl'>Start</p>
+                                <TimePicker 
+                                    // ampm={false}
+                                    value={timeStart}
+                                    onChange={(newTime) => setTimeStart(newTime)}
+                                />
+                                </div>
+                                <div className='flex flex-col'>
+                                <p className='mb-1 text-2xl'>End</p>
+                                <TimePicker 
+                                    // ampm={false}
+                                    value={timeEnd} 
+                                    onChange={(newTime) => setTimeEnd(newTime)}
+                                />
+                                </div>
+                            </div>
                         </div>
-                    </Fragment>
+                    </LocalizationProvider>
+                </div>
                 }
                     additions={
-                    <button onClick={handleSubmitReschedule} className='btn-blue mt-2'>Submit</button>
+                    <button onClick={() => handleSubmitReschedule(modalData.sched_id)} className='btn-blue mt-10'>Submit</button>
                 }
             />)}
             <Back link='/dashboard'/>
@@ -145,18 +199,23 @@ const Calendar = () => {
                                 return (
                                     <div className='space-y-3' key={appointment.sched_id}>
                                     {/* Header */}
+                                    <span className='font-bold text-xl'>{appointment.sched_appid}</span>
                                     <div className='flex row-auto justify-between items-center'>
-                                        <h1 className='heading-1'>{appointment.app_institution}</h1>
+                                        <div>
+                                            <h1 className='heading-1'>{appointment.app_institution}</h1>
+                                        </div>
                                         <div className='ml-auto'>
-                                        <Link to={'#'}><button  className='btn bg-blue-400 flex items-center justify-center space-x-2'>
-                                                <Visibility/>
+                                            <Link to={'#'}>
+                                            <button className='btn bg-blue-400 flex items-center justify-center space-x-2'>
+                                                <Visibility />
                                                 <span>View Application</span>
-                                            </button></Link>
+                                            </button>
+                                            </Link>
                                         </div>
                                         <div>
-                                        <button onClick={() => handleOpen(appointment)} className='btn-orange flex items-center justify-center space-x-2'>
-                                                <ScheduleSend/>
-                                                <span>Reschedule</span>
+                                            <button onClick={() => handlePassdata(appointment)} className='btn-orange flex items-center justify-center space-x-2'>
+                                            <ScheduleSend />
+                                            <span>Reschedule</span>
                                             </button>
                                         </div>
                                     </div>
