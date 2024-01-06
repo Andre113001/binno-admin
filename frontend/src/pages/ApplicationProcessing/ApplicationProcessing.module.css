@@ -1,0 +1,16 @@
+.title {
+    margin-top: 51px;
+}
+
+.application-processing-title {
+    color: #000;
+    font-size: 60.79px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.filters {
+    margin-top: 41px;
+    width: 100%;
+    display: flex;
+}

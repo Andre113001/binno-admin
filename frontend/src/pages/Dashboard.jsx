@@ -32,10 +32,10 @@ function Dashboard() {
           <div className="navigation-controller container flex flex-col items-center justify-center p-5 m-5
           border-double border-2 border-sky-500">
             <div className='flex flex-row'>
-              <button className='bg-orange-500 m-3 p-10 text-xl text-white rounded-2xl w-96 flex flex-col items-center justify-center'>
+              <Link to={'application_proccesing'} className='bg-orange-500 m-3 p-10 text-xl text-white rounded-2xl w-96 flex flex-col items-center justify-center'>
                 <AccountCircleRoundedIcon />
                 Members
-              </button>
+              </Link>
               <button className='bg-orange-300 m-3 p-10 text-xl text-white rounded-2xl flex flex-col items-center justify-center'>
                 <SendRoundedIcon />
                 Notify
