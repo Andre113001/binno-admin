@@ -31,7 +31,9 @@ const ApplicationProcessingList = (props) => {
             <td className={`${styles["action"]}`}>
                 <div className={`${styles["action-button"]}`}>
                     <div className={`${styles["document"]}`}>
-                        <DocumentIcon />
+                        <div onClick={() => documentHandler(1)}>
+                            <DocumentIcon />
+                        </div>
                         <button
                             onClick={() => documentHandler(1)}
                             className={`${styles["document-button"]}`}
@@ -41,7 +43,9 @@ const ApplicationProcessingList = (props) => {
                     </div>
                     <div className={`${styles["schedule"]}`}>
                         {/* <ScheduleIcon /> */}
-                        <RespondIcon/>
+                        <div onClick={() => documentHandler(2)}>
+                            <RespondIcon />
+                        </div>
                         <button
                             onClick={() => documentHandler(2)}
                             className={`${styles["schedule-button"]}`}
